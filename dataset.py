@@ -3,7 +3,7 @@ from sklearn.utils import shuffle
 
 import tensorflow as tf
 
-def get_dataset_paths(min_pt=100):
+def get_qgjets_paths(min_pt=100):
     host = os.environ["HOSTNAME"]
     if host == 'gate2.sscc.uos.ac.kr':
         pass
