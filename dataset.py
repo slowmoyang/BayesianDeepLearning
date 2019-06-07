@@ -3,6 +3,22 @@ from sklearn.utils import shuffle
 
 import tensorflow as tf
 
+def get_dataset_paths(min_pt=100):
+    host = os.environ["HOSTNAME"]
+    if host == 'gate2.sscc.uos.ac.kr':
+        pass
+    elif host == 'cms05.sscc.uos.ac.kr':
+        base = "/store/slowmoyang/QGJets/Dataset-ASAP-npz/"
+
+    path_fmt = os.path.join(base, '{}_pt_{}_{}_{}_set.npz') 
+
+    max_pt = int(1.1 * min_pt)
+    tags = ['training', 'validation', 'test']
+
+    paths = {tag: [path_fmt.format(final, min_pt, max_pt, tag) for final in ['qq', 'gg']] for tag in tags}
+    return paths
+
+
 def load_dataset(paths):
     npz_files = [np.load(each) for each in paths]
     
