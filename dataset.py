@@ -41,28 +41,27 @@ def load_dataset(paths):
     x, y = shuffle(x, y)
     return x, y
 
+
+def get_one_shot_iter(dataset):
+    size = len(dataset[0])
+    dataset = tf.data.Dataset.from_tensor_slices(dataset)
+    dataset = dataset.take(size)
+    dataset = dataset.repeat()
+    dataset = dataset.batch(size)
+    return tf.compat.v1.data.make_one_shot_iterator(dataset)
+
 def build_input_pipeline(train_set,
                          valid_set,
                          test_set,
                          batch_size=128):
     """Build an Iterator switching between train, valid and test data."""
-    # Build an iterator over training batches.
+    # make an initializable iterator
     train_set = tf.data.Dataset.from_tensor_slices(train_set)
     train_set = train_set.shuffle(
         buffer_size=50000,
         reshuffle_each_iteration=True)
-    # train_set = train_set.repeat()
     train_set = train_set.batch(batch_size)
-    # tarin_iter = tf.compat.v1.data.make_one_shot_iterator(train_set)
     tarin_iter = train_set.make_initializable_iterator()
-
-    def get_one_shot_iter(dset):
-        size = len(dset[0])
-        dset = tf.data.Dataset.from_tensor_slices(dset)
-        dset = dset.take(size)
-        dset = dset.repeat()
-        dset = dset.batch(size)
-        return tf.compat.v1.data.make_one_shot_iterator(dset)
 
     valid_iter = get_one_shot_iter(valid_set)
     test_iter = get_one_shot_iter(test_set)
