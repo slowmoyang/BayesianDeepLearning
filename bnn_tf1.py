@@ -44,11 +44,12 @@ def main():
     parser.add_argument('-T', '--num-samples', default=1000, type=int)
     parser.add_argument('-e', '--num-epochs', default=100, type=int)
     parser.add_argument('-d', '--out-dir', default='/tmp/')
-    parser.add_argument('-n', '--out-name', default='bnn')
+    parser.add_argument('-n', '--out-name')
     args = parser.parse_args()
 
+    max_pt = int(1.1 * args.min_pt)
     if args.out_name is None:
-        args.out_name = 'bnn-' + datetime.now().strftime("%y%m%d-%H%M%S")
+        args.out_name = 'bnn_pt-{}-{}'.format(args.min_pt, max_pt)
 
     paths = get_qgjets_paths(args.min_pt)
     train_set = load_dataset(paths['training'])
@@ -130,25 +131,22 @@ def main():
 
         print("@" * 10 + " END " + "@" * 10)
 
-        y_true, y_pred_samples = sess.run(
-            fetches=[labels, labels_dist.sample(args.num_samples)],
-            feed_dict={handle: test_handle})
+        y_true = sess.run(fetches=labels, feed_dict={handle: test_handle})
 
         def sample():
             return sess.run(fetches=[labels_dist.sample(), labels_dist.probs],
                             feed_dict={handle: test_handle})
-
         result = [sample() for _ in range(args.num_samples)]
-        y_pred_samples, prob_samples = zip(*result)
+        pred_samples, prob_samples = zip(*result)
         
-        y_pred_samples = np.stack(prob_samples)
+        pred_samples = np.stack(prob_samples)
         prob_samples = np.stack(prob_samples)
 
     out_path = os.path.join(args.out_dir, args.out_name)
     np.savez(out_path,
              y_true=y_true,
-             y_score=prob_samples,
-             y_pred_samples=y_pred_samples)
+             prob_samples=prob_samples,
+             pred_samples=pred_samples)
 
 
 if __name__ == '__main__':
