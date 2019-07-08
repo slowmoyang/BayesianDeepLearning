@@ -9,7 +9,7 @@ GATE2 = 'gate2.sscc.uos.ac.kr'
 DGX = 'dgx'
 CMS05 = 'cms05.sscc.uos.ac.kr'
 
-def load_dataset(tag, min_pt=1000, with_feature_names=False, onehot=True):
+def load_qgjets_dataset(tag, min_pt=1000, with_feature_names=False, onehot=True):
     assert tag in ['training', 'validation', 'test']
     assert min_pt in [100, 200, 500, 1000]
 
