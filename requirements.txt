@@ -1,6 +1,6 @@
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.0
-numpy==1.16.4
+numpy==1.22.0
 scikit-learn==0.21.2
 tensorboard==1.14.0
 tensorflow-datasets==1.0.2
